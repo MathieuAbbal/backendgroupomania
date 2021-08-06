@@ -24,7 +24,7 @@ const User = database.define('User', {
   },
   avatar: {
     type: DataTypes.STRING,
-    defaultValue: `http://localhost:3000/images/profil_default.jpg`
+    defaultValue: `http://backendgroupomania.herokuapp.com/images/profil_default.jpg`
   },
   bio: {
     type: DataTypes.STRING
