@@ -6,6 +6,7 @@ const path = require('path');
 const helmet = require("helmet");
 //importation des models
 const {loadModel}= require('./models/index');
+const  history  =  require ( 'connect-history-api-fallback' ) ;
 
 // Création d'une application express
 const app = express();
@@ -27,6 +28,7 @@ app.use((req, res, next) => {
 });
 loadModel();
 //permet de décoder une requête encodée en json
+app.use(history({}));
 app.use(express.json());
 app.use(helmet());
 app.use('/images', express.static(path.join(__dirname, 'images')));
