@@ -32,9 +32,9 @@ exports.modifyUser = (req, res, next) => {
  
   const userObject = req.file ?//Opérateur ternaire équivalent à if() {} else {} => condition ? Instruction si vrai : Instruction si faux   
     {
-      ...req.body.user,//opérateur spread pour faire une copie de la variable
+      bio:req.body.bio,
       avatar:`${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : { ...req.body };
+    } : { ...req.body.user };
 
   User.update({ ...userObject, id: req.params.id }, { where: { id: req.params.id } })
     .then(() => res.status(200).json({ message: 'Utilisateur modifié !' }))    
