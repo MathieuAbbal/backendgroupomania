@@ -34,7 +34,7 @@ exports.modifyUser = (req, res, next) => {
     {
       bio:req.body.bio,
       avatar:`${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    } : { ...req.body.user };
+    } : { ...req.body };
 
   User.update({ ...userObject, id: req.params.id }, { where: { id: req.params.id } })
     .then(() => res.status(200).json({ message: 'Utilisateur modifié !' }))    
