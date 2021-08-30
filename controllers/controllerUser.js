@@ -61,14 +61,11 @@ exports.deleteUser = (req, res, next) => {
             )
             .then(() =>
               User.findOne({ where: { id: req.params.id } })//objet de comparaison avec opérateur de sélection
-                .then(user => {
-                  const filename = user.avatar.split('/images/')[1];
-                  fs.unlink(`images/${filename}`, () => {
+                .then( () => {                  
                   User.destroy({ where: { id: req.params.id } })
                     .then(() => res.status(200).json({ message: 'Utilisateur supprimé !' }))
                     .catch(error => res.status(500).json({ error }));
                   })
-                })
             )
         )
     )
