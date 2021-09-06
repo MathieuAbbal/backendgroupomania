@@ -85,22 +85,31 @@ exports.findPostsByUserId = (req, res, next) => {
  * Modifie une publication
  * @requête { PUT } /api/posts/:id
  */
-exports.modifyPost = (req, res, next) => {
+ exports.modifyPost = (req, res, next) => {
     //Opérateur ternaire équivalent à if() {} else {} => condition ? Instruction si vrai : Instruction si faux
-    Post.findOne({where: { id: req.params.id } }) //objet de comparaison avec opérateur de sélection        
+    Post.findOne({ where: { id: req.params.id } }) //méthode pour obtenir la publication en fonction de l'option de requête       
         .then(post => {
-            if (post.user_id === req.token.user_id) {
+            if (post.user_id === req.token.user_id || req.token.isAdmin === true) {
                 const postObject = req.file ?//on regarde si il y a un fichier dans la requête
                     {
                         ...req.body,
                         imageurl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
                     } : { ...req.body };
+                if (post.imageurl != null) {
                     const filename = post.imageurl.split('/images/')[1];
+
                     fs.unlink(`images/${filename}`, () => {
+                        Post.update({ ...postObject, id: req.params.id }, { where: { id: req.params.id } })
+                            .then(() => res.status(200).json({ message: 'Publication modifiée !' }))
+                            .catch(error => res.status(400).json({ error }));
+
+                    })
+                }
+                else {
                     Post.update({ ...postObject, id: req.params.id }, { where: { id: req.params.id } })
-                     .then(() => res.status(200).json({ message: 'Publication modifiée !' }))
-                     .catch(error => res.status(400).json({ error }));
-                })
+                        .then(() => res.status(200).json({ message: 'Publication modifiée !' }))
+                        .catch(error => res.status(400).json({ error }));
+                }
             }
             else {
                 res.status(403).json({ 'message': 'Vous n\'ètes pas autoriser' })
@@ -108,7 +117,7 @@ exports.modifyPost = (req, res, next) => {
         })
         .catch(error => res.status(404).json({ error }));
 
-};
+}
 /**
  * Suppression d'une publication
  * @requête {DELETE}/api/posts/:id
